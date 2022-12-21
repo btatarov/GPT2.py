@@ -17,7 +17,7 @@ class Dataset:
     TOKENIZED_DATA_PATH = './datasets/tokens/'
     CONTENT_PATH = './text/'
 
-    def __init__(self, dataset_split_ratio: Optional[float] = 0.95, rebuild: Optional[bool] = False) -> object:
+    def __init__(self, dataset_split_ratio: Optional[float] = 0.95, rebuild: Optional[bool] = False) -> None:
         if 1 <= dataset_split_ratio <= 0:
             raise ValueError('dataset_split_ratio must be in the range of (0, 1)')
 

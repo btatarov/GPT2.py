@@ -16,7 +16,7 @@ class StopTrainingCallback(tf.keras.callbacks.Callback):
 class Model:
     CHECKPOINT_DIR = './checkpoint/'
 
-    def __init__(self, dataset: Dataset, rebuild: Optional[bool] = False) -> object:
+    def __init__(self, dataset: Dataset, rebuild: Optional[bool] = False) -> None:
         tokenizer = dataset.get_tokenizer()
 
         if rebuild:

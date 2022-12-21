@@ -8,7 +8,7 @@ Python 3.9+
 
 ## Usage
 
-Use `main.py` as a starting point. Run the script with `--rebuild` the first time to generate the BPE tokens and datests.
+Use `main.py` as a starting point. Run the script with `--rebuild` the first time to generate the BPE tokens and datesets.
 
 ``` bash
 ./main.py [--rebuild]
@@ -27,11 +27,11 @@ Put the content you want to train the model on as UTF-8 encoded plain .txt files
 - `DATASET_TRAIN_PATH` - path to the generated training dataset
 - `DATASET_TEST_PATH` - path to the generated validation dataset
 - `TOKENIZED_DATA_PATH` - path to the generated vocabulary data
-- `CONTENT_PATH` - path to the raw data used for building the datasets
+- `CONTENT_PATH` - path to the raw data used for creating datasets
 
 ## Model
 
-The model is build on top of TFGPT2LMHeadModel. Can be used for training from scratch, or by loading a previous checkpoint.
+The model is build on top of **TFGPT2LMHeadModel**. Can be used for training from scratch, or by loading a previous checkpoint.
 
 ### Constants
 
