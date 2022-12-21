@@ -1,0 +1,6 @@
+.venv
+backup/
+checkpoint/
+datasets/
+text/
+stats.txt
