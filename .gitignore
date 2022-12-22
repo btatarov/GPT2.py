@@ -1,6 +1,7 @@
-.venv
-backup/
-checkpoint/
-datasets/
+.backup/
+.checkpoint/
+.dataset/
+.venv/
+plot/
 text/
-stats.txt
+log.json

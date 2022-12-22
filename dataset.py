@@ -10,12 +10,12 @@ from transformers import GPT2Tokenizer
 class Dataset:
     VOCAB_SIZE = 100000
     DATASET_SEQ_LENGTH = 100
-    DATASET_BATCH_SIZE = 35
+    DATASET_BATCH_SIZE = 30
     DATASET_BUFFER_SIZE = 5000
-    DATASET_TRAIN_PATH = './datasets/train/'
-    DATASET_TEST_PATH = './datasets/test/'
-    TOKENIZED_DATA_PATH = './datasets/tokens/'
-    CONTENT_PATH = './text/'
+    DATASET_TRAIN_DIR = './.dataset/train/'
+    DATASET_TEST_DIR = './.dataset/test/'
+    TOKENIZED_DATA_DIR = './.dataset/tokens/'
+    CONTENT_DIR = './text/'
 
     def __init__(self, dataset_split_ratio: Optional[float] = 0.95, rebuild: Optional[bool] = False) -> None:
         if 1 <= dataset_split_ratio <= 0:
@@ -38,7 +38,7 @@ class Dataset:
 
     def get_tokenizer(self) -> GPT2Tokenizer:
         if not self._tokenizer:
-            self._tokenizer = GPT2Tokenizer.from_pretrained(self.TOKENIZED_DATA_PATH)
+            self._tokenizer = GPT2Tokenizer.from_pretrained(self.TOKENIZED_DATA_DIR)
             self._tokenizer.add_special_tokens({
                 'eos_token': '</s>',
                 'bos_token': '<s>',
@@ -49,12 +49,12 @@ class Dataset:
         return self._tokenizer
 
     def generate_data(self, tokenize: Optional[bool] = False) -> None:
-        corpus_paths = sorted([str(path) for path in Path(self.CONTENT_PATH).glob('**/*.txt')])
+        corpus_paths = sorted([str(path) for path in Path(self.CONTENT_DIR).glob('**/*.txt')])
 
         # BPE tokenize
         if tokenize:
-            if not os.path.exists(self.TOKENIZED_DATA_PATH):
-                os.makedirs(self.TOKENIZED_DATA_PATH)
+            if not os.path.exists(self.TOKENIZED_DATA_DIR):
+                os.makedirs(self.TOKENIZED_DATA_DIR)
             bpe_tokenizer = ByteLevelBPETokenizer(lowercase=True, unicode_normalizer='nfkc')
             bpe_tokenizer.add_tokens(['…',])
             bpe_tokenizer.train(
@@ -62,7 +62,7 @@ class Dataset:
                 vocab_size=self.VOCAB_SIZE,
                 special_tokens=['<s>', '<pad>', '</s>', '<unk>', '<mask>'],
             )
-            bpe_tokenizer.save_model(self.TOKENIZED_DATA_PATH)
+            bpe_tokenizer.save_model(self.TOKENIZED_DATA_DIR)
 
         # tokenize the raw texts
         tokenizer = self.get_tokenizer()
@@ -82,21 +82,21 @@ class Dataset:
 
         batches = round(len(inputs) * self._split_ratio)
         dataset_train = tf.data.Dataset.from_tensor_slices((inputs[:batches], labels[:batches]))
-        tf.data.Dataset.save(dataset_train, self.DATASET_TRAIN_PATH, compression='GZIP')
+        tf.data.Dataset.save(dataset_train, self.DATASET_TRAIN_DIR, compression='GZIP')
 
         dataset_test = tf.data.Dataset.from_tensor_slices((inputs[batches:], labels[batches:]))
-        tf.data.Dataset.save(dataset_test, self.DATASET_TEST_PATH, compression='GZIP')
+        tf.data.Dataset.save(dataset_test, self.DATASET_TEST_DIR, compression='GZIP')
 
         self.load_data(dataset_train, dataset_test)
 
     def load_data(self, dataset_train: Optional[tf.data.Dataset] = None, dataset_test: Optional[tf.data.Dataset] = None) -> None:
-        dataset_train = dataset_train or tf.data.Dataset.load(self.DATASET_TRAIN_PATH, compression='GZIP')
+        dataset_train = dataset_train or tf.data.Dataset.load(self.DATASET_TRAIN_DIR, compression='GZIP')
         dataset_train = dataset_train.shuffle(self.DATASET_BUFFER_SIZE)
         dataset_train = dataset_train.batch(self.DATASET_BATCH_SIZE, drop_remainder=True)
         dataset_train = dataset_train.prefetch(tf.data.AUTOTUNE)
         self._datasets['train'] = dataset_train
 
-        dataset_test = dataset_test or tf.data.Dataset.load(self.DATASET_TEST_PATH, compression='GZIP')
+        dataset_test = dataset_test or tf.data.Dataset.load(self.DATASET_TEST_DIR, compression='GZIP')
         dataset_test = dataset_test.shuffle(self.DATASET_BUFFER_SIZE)
         dataset_test = dataset_test.batch(self.DATASET_BATCH_SIZE, drop_remainder=True)
         dataset_test = dataset_test.prefetch(tf.data.AUTOTUNE)
