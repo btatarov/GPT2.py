@@ -1,6 +1,6 @@
 # GPT2.py
 
-A lightweight Tensorflow wrapper around HuggingFace's GPT2 language modeling model that handles BPE tokenization, dataset preparation, training, and text generation. Epoch stats are saved to a JSON log file and the data is visualized using **matplotlib**.
+A lightweight Tensorflow wrapper around HuggingFace's GPT2 language modeling head model that handles BPE tokenization, dataset preparation, training, and text generation. Epoch stats are saved to a JSON log file and the data is visualized using **matplotlib**.
 
 ## Requirements
 
